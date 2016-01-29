@@ -6,3 +6,5 @@
 *.pyo
 *.xlsx
 *.xls
+*.xml
+*.iml
