@@ -18,6 +18,20 @@ class eMPL_packet_reader:
         else:
             self.quat_delegate = empty_packet_delegate()
 
+        if debug_delegate:
+            self.debug_delegate = debug_delegate
+        else:
+            self.debug_delegate = empty_packet_delegate()
+
+        if data_delegate:
+            self.data_delegate = data_delegate
+        else:
+            self.data_delegate = empty_packet_delegate()
+
+        self.packets = []
+        self.length = 0
+        self.previous = None
+
     def read(self):
         NUM_BYTES = 23
         p = None
