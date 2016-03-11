@@ -106,6 +106,8 @@ class Cube(object):
             , Vector3(a, -b, c), Vector3(-a, -b, c)
             , Vector3(-a, b, -c), Vector3(a, b, -c)
             , Vector3(a, -b, -c), Vector3(-a, -b, -c)]
+        self.crdpts = [Vector3(0, 0, 0), Vector3(100, 0, 0)
+                       ,Vector3(0, 100, 0), Vector3(0, 0, 100)]
 
     def origin(self):
         """ reset self.pts to the origin, so we can give them a new rotation """
@@ -117,17 +119,20 @@ class Cube(object):
             , Vector3(-a, b, -c), Vector3(a, b, -c)
             , Vector3(a, -b, -c), Vector3(-a, -b, -c)]
 
+        self.crdpts = [Vector3(0, 0, 0), Vector3(100, 0, 0)
+                       ,Vector3(0, 100, 0), Vector3(0, 0, 100)]
+
     def sides(self):
         """ each side is a Side object of a certain color """
         # leftright  = (80,80,150) # color
         # topbot     = (30,30,150)
         # frontback  = (0,0,150)
-        one = (255, 0, 0)
-        two = (0, 255, 0)
-        three = (0, 0, 255)
-        four = (255, 255, 0)
-        five = (0, 255, 255)
-        six = (255, 0, 255)
+        one = (166, 204, 162)
+        two = (168, 13, 13)
+        three = (145,77, 136)
+        four = (179, 158, 209)
+        five = (204, 180, 164)
+        six = (153, 171, 213)
         a, b, c, d, e, f, g, h = self.pts
         sides = [Side(a, b, c, d, one)  # front
             , Side(e, f, g, h, two)  # back
@@ -148,12 +153,23 @@ class Cube(object):
                  ]
         return edges
 
+    def coordinate(self):
+
+        white = (255, 255, 255)
+        red = (255, 0, 0)
+        green = (0, 255, 0)
+        blue = (0, 0, 255)
+        o, x, y, z = self.crdpts
+        coordinate = [Edge(o, x, red), Edge(o, y, green), Edge(o, z, white)]
+        return coordinate
+
     def erase(self, screen):
         """ erase object at present rotation (last one drawn to screen) """
         assert isinstance(screen, Screen)
         sides = self.sides()
         edges = self.edges()
-        erasables = sides + edges
+        coordinate = self.coordinate()
+        erasables = sides + edges + coordinate
         [s.erase(screen) for s in erasables]
 
     def draw(self, screen, q=Quaternion(1, 0, 0, 0)):
@@ -163,7 +179,8 @@ class Cube(object):
         self.rotate(q)
         sides = self.sides()
         edges = self.edges()
-        drawables = sides + edges
+        coordinate = self.coordinate()
+        drawables = sides + edges + coordinate
         drawables.sort(key=lambda s: screen.depth(s.centroid()))
         [s.draw(screen) for s in drawables]
 
@@ -171,12 +188,13 @@ class Cube(object):
         assert isinstance(q, Quaternion)
         R = q.get_matrix()
         self.pts = [R * p for p in self.pts]
+        self.crdpts = [R * p for p in self.crdpts]
 
 
 if __name__ == "__main__":
     pygame.init()
     screen = Screen(480, 400, scale=1.5)
-    cube = Cube(40, 30, 60)
+    cube = Cube(30, 30, 30)
     q = Quaternion(1, 0, 0, 0)
     incr = Quaternion(0.96, 0.01, 0.01, 0).normalized()
 
