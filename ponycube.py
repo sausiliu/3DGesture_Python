@@ -27,7 +27,7 @@ class Screen(object):
         assert isinstance(v, Vector3)
         return v.z
 
-class PrespectiveScreen(Screen):
+class PerspectiveScreen(Screen):
     # the xy projection and depth functions are really an orthonormal space
     # but here i just approximated it with decimals to keep it quick n dirty
     def project(self, v):
