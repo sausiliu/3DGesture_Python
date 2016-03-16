@@ -101,11 +101,16 @@ class Cube(object):
     def __init__(self, a=10, b=10, c=10):
         self.a = a
         self.b = b
-        self.c = c
+        self.c = -c
         self.pts = [Vector3(-a, b, c), Vector3(a, b, c)
             , Vector3(a, -b, c), Vector3(-a, -b, c)
             , Vector3(-a, b, -c), Vector3(a, b, -c)
             , Vector3(a, -b, -c), Vector3(-a, -b, -c)]
+
+        self.matrix = [  0, -1, 0
+                        , -1, 0, 0
+                        , 0, 0, 1 ]
+
         self.crdpts = [Vector3(0, 0, 0), Vector3(100, 0, 0)
                        ,Vector3(0, 100, 0), Vector3(0, 0, 100)]
 
@@ -114,13 +119,27 @@ class Cube(object):
         a = self.a;
         b = self.b;
         c = self.c
+
+        '''
         self.pts = [Vector3(-a, b, c), Vector3(a, b, c)
             , Vector3(a, -b, c), Vector3(-a, -b, c)
             , Vector3(-a, b, -c), Vector3(a, b, -c)
             , Vector3(a, -b, -c), Vector3(-a, -b, -c)]
+        '''
+        self.pts = [Vector3(-a, b, -c), Vector3(a, b, -c)
+            , Vector3(a, -b, -c), Vector3(-a, -b, -c)
+            , Vector3(-a, b, c), Vector3(a, b, c)
+            , Vector3(a, -b, c), Vector3(-a, -b, c)]
 
         self.crdpts = [Vector3(0, 0, 0), Vector3(100, 0, 0)
                        ,Vector3(0, 100, 0), Vector3(0, 0, 100)]
+
+    def martrixtransformation(self, a = Vector3(0, 0, 0)):
+        temp = Vector3(0, 0, 0)
+        temp.x = a.x*self.matrix[0] + a.y*self.matrix[1] + a.z*self.matrix[2]
+        temp.y = a.x*self.matrix[3] + a.y*self.matrix[4] + a.z*self.matrix[5]
+        temp.z = a.x*self.matrix[6] + a.y*self.matrix[7] + a.z*self.matrix[8]
+        return  temp
 
     def sides(self):
         """ each side is a Side object of a certain color """
@@ -134,6 +153,17 @@ class Cube(object):
         five = (204, 180, 164)
         six = (153, 171, 213)
         a, b, c, d, e, f, g, h = self.pts
+
+        a = self.martrixtransformation(a)
+        b = self.martrixtransformation(b)
+        c = self.martrixtransformation(c)
+        d = self.martrixtransformation(d)
+        e = self.martrixtransformation(e)
+        f = self.martrixtransformation(f)
+        g = self.martrixtransformation(g)
+        h = self.martrixtransformation(h)
+
+
         sides = [Side(a, b, c, d, one)  # front
             , Side(e, f, g, h, two)  # back
             , Side(a, e, f, b, three)  # bottom
@@ -141,12 +171,30 @@ class Cube(object):
             , Side(c, g, h, d, five)  # top
             , Side(d, h, e, a, six)  # left
                  ]
+        '''
+        sides = [Side(a, e, f, b, one)  # front
+            , Side(c, g, h, d, two)  # back
+            , Side(e, f, g, h, three)  # bottom
+            , Side(b, f, g, c, four)  # right
+            , Side(a, b, c, d, five)  # top
+            , Side(d, h, e, a, six)  # left
+                ]
+        '''
         return sides
 
     def edges(self):
         """ each edge is drawn as well """
         ec = (0, 0, 255)  # color
         a, b, c, d, e, f, g, h = self.pts
+
+        a = self.martrixtransformation(a)
+        b = self.martrixtransformation(b)
+        c = self.martrixtransformation(c)
+        d = self.martrixtransformation(d)
+        e = self.martrixtransformation(e)
+        f = self.martrixtransformation(f)
+        g = self.martrixtransformation(g)
+        h = self.martrixtransformation(h)
         edges = [Edge(a, b, ec), Edge(b, c, ec), Edge(c, d, ec), Edge(d, a, ec)
             , Edge(e, f, ec), Edge(f, g, ec), Edge(g, h, ec), Edge(h, e, ec)
             , Edge(a, e, ec), Edge(b, f, ec), Edge(c, g, ec), Edge(d, h, ec)
@@ -160,6 +208,9 @@ class Cube(object):
         green = (0, 255, 0)
         blue = (0, 0, 255)
         o, x, y, z = self.crdpts
+        x = self.martrixtransformation(x)
+        y = self.martrixtransformation(y)
+        z = self.martrixtransformation(z)
         coordinate = [Edge(o, x, red), Edge(o, y, green), Edge(o, z, white)]
         return coordinate
 
@@ -190,14 +241,13 @@ class Cube(object):
         self.pts = [R * p for p in self.pts]
         self.crdpts = [R * p for p in self.crdpts]
 
-
 if __name__ == "__main__":
     pygame.init()
     screen = Screen(480, 400, scale=1.5)
     cube = Cube(30, 30, 30)
     q = Quaternion(1, 0, 0, 0)
     incr = Quaternion(0.96, 0.01, 0.01, 0).normalized()
-
+    incr = Quaternion(1, 0, 0, 0).normalized()
     while 1:
         q = q * incr
         cube.draw(screen, q)
