@@ -110,6 +110,9 @@ class Cube(object):
         self.matrix = [  0, -1, 0
                         , -1, 0, 0
                         , 0, 0, 1 ]
+        self.viewmatrix = [ 0, 1, 0,
+                            0, 0, -1,
+                            -1, 0, 0 ]
 
         self.crdpts = [Vector3(0, 0, 0), Vector3(100, 0, 0)
                        ,Vector3(0, 100, 0), Vector3(0, 0, 100)]
@@ -141,6 +144,13 @@ class Cube(object):
         temp.z = a.x*self.matrix[6] + a.y*self.matrix[7] + a.z*self.matrix[8]
         return  temp
 
+    def newperspective(self, a = Vector3(0, 0, 0)):
+        temp = Vector3(0, 0, 0)
+        temp.x = a.x*self.viewmatrix[0] + a.y*self.viewmatrix[1] + a.z*self.viewmatrix[2]
+        temp.y = a.x*self.viewmatrix[3] + a.y*self.viewmatrix[4] + a.z*self.viewmatrix[5]
+        temp.z = a.x*self.viewmatrix[6] + a.y*self.viewmatrix[7] + a.z*self.viewmatrix[8]
+        return  temp
+
     def sides(self):
         """ each side is a Side object of a certain color """
         # leftright  = (80,80,150) # color
@@ -163,6 +173,14 @@ class Cube(object):
         g = self.martrixtransformation(g)
         h = self.martrixtransformation(h)
 
+        a = self.newperspective(a)
+        b = self.newperspective(b)
+        c = self.newperspective(c)
+        d = self.newperspective(d)
+        e = self.newperspective(e)
+        f = self.newperspective(f)
+        g = self.newperspective(g)
+        h = self.newperspective(h)
 
         sides = [Side(a, b, c, d, one)  # front
             , Side(e, f, g, h, two)  # back
@@ -195,6 +213,17 @@ class Cube(object):
         f = self.martrixtransformation(f)
         g = self.martrixtransformation(g)
         h = self.martrixtransformation(h)
+
+        a = self.newperspective(a)
+        b = self.newperspective(b)
+        c = self.newperspective(c)
+        d = self.newperspective(d)
+        e = self.newperspective(e)
+        f = self.newperspective(f)
+        g = self.newperspective(g)
+        h = self.newperspective(h)
+
+
         edges = [Edge(a, b, ec), Edge(b, c, ec), Edge(c, d, ec), Edge(d, a, ec)
             , Edge(e, f, ec), Edge(f, g, ec), Edge(g, h, ec), Edge(h, e, ec)
             , Edge(a, e, ec), Edge(b, f, ec), Edge(c, g, ec), Edge(d, h, ec)
@@ -211,6 +240,11 @@ class Cube(object):
         x = self.martrixtransformation(x)
         y = self.martrixtransformation(y)
         z = self.martrixtransformation(z)
+
+        x = self.newperspective(x)
+        y = self.newperspective(y)
+        z = self.newperspective(z)
+
         coordinate = [Edge(o, x, red), Edge(o, y, green), Edge(o, z, white)]
         return coordinate
 
