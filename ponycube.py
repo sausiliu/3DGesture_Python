@@ -189,15 +189,7 @@ class Cube(object):
             , Side(c, g, h, d, five)  # top
             , Side(d, h, e, a, six)  # left
                  ]
-        '''
-        sides = [Side(a, e, f, b, one)  # front
-            , Side(c, g, h, d, two)  # back
-            , Side(e, f, g, h, three)  # bottom
-            , Side(b, f, g, c, four)  # right
-            , Side(a, b, c, d, five)  # top
-            , Side(d, h, e, a, six)  # left
-                ]
-        '''
+
         return sides
 
     def edges(self):
